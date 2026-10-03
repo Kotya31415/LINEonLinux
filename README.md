@@ -1,2 +1,0 @@
-# LINEonLinux
-LINE on Linux
