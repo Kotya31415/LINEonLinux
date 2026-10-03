@@ -1,0 +1,18 @@
+{
+  "name": "line-native-linux-cli",
+  "version": "0.6.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@evex/linejs": "npm:@jsr/evex__linejs@3.4.2"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check bin/line-native.mjs && node --check bin/line-native-tui.mjs && node --check lib/line-adapter.mjs && node --check lib/normalize.mjs && node --check lib/tui.mjs",
+    "start": "node bin/line-native.mjs",
+    "tui": "node bin/line-native-tui.mjs"
+  }
+}
