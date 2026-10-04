@@ -42,3 +42,37 @@ test("normalizeProfile maps common fields", () => {
   assert.equal(p.statusMessage, "Hi");
   assert.equal(p.regionCode, "JP");
 });
+
+test("normalizeUser handles the real GetContactV3 profile field", async () => {
+  const { normalizeUser } = await import("../lib/normalize.mjs");
+  const user = normalizeUser({ raw: {
+    targetUserMid: "u123",
+    targetProfileDetail: { profileName: "Real LINE Name", picturePath: "p", pictureStatus: "1" },
+    friendDetail: { overriddenName: "" },
+  }});
+  assert.equal(user.mid, "u123");
+  assert.equal(user.profileName, "Real LINE Name");
+  assert.equal(user.displayName, "Real LINE Name");
+});
+
+test("normalizeUser prefers LINE's local display-name override", async () => {
+  const { normalizeUser } = await import("../lib/normalize.mjs");
+  const user = normalizeUser({ raw: {
+    targetUserMid: "u456",
+    targetProfileDetail: { profileName: "Profile Name" },
+    friendDetail: { overriddenName: "My Custom Name" },
+  }});
+  assert.equal(user.displayName, "My Custom Name");
+  assert.equal(user.profileName, "Profile Name");
+  assert.equal(user.overriddenName, "My Custom Name");
+});
+
+test("normalizeUser exposes avatar URL candidates from pictureStatus", async () => {
+  const { normalizeUser } = await import("../lib/normalize.mjs");
+  const user = normalizeUser({ raw: { targetUserMid: "u789", targetProfileDetail: { profileName: "Avatar User", pictureStatus: "abc/def" } } });
+  assert.deepEqual(user.avatarUrls, [
+    "https://profile.line-scdn.net/abc/def",
+    "https://obs.line-scdn.net/abc/def",
+    "https://dl.profile.line-cdn.net/abc/def",
+  ]);
+});

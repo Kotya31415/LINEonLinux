@@ -13,7 +13,8 @@ function makeMockRuntime() {
     constructor(init) {
       this.init = init;
       this.handlers = new Map();
-      this.loginProcess = { login: async (args) => { state.loginArgs = args; this.handlers.get("update:authtoken")?.("rotated-token"); } };
+      this.authToken = null;
+      this.loginProcess = { login: async (args) => { state.loginArgs = args; this.authToken = args.authToken || "rotated-token"; this.handlers.get("update:authtoken")?.(this.authToken); } };
     }
     on(name, fn) { this.handlers.set(name, fn); }
   }
@@ -53,8 +54,8 @@ function makeMockRuntime() {
     listen() { state.listenCalls += 1; }
     async getMyProfile() { return { mid: "me", displayName: "Tester", regionCode: "JP" }; }
     async fetchJoinedChats() { return [{ mid: "c1", name: "Group A", raw: { chatMid: "c1", chatName: "Group A", type: 2 } }]; }
-    async fetchUsers() { return [{ mid: "u1", raw: { targetUserMid: "u1", displayName: "Alice" } }]; }
-    async getUser(mid) { return { mid, raw: { targetUserMid: mid, displayName: "Alice" } }; }
+    async fetchUsers() { return [{ mid: "u1", raw: { targetUserMid: "u1", targetProfileDetail: { profileName: "Alice" }, friendDetail: {} } }]; }
+    async getUser(mid) { return { mid, raw: { targetUserMid: mid, targetProfileDetail: { profileName: "Alice" }, friendDetail: {} } }; }
     async getChat(mid) {
       return {
         mid,
@@ -75,6 +76,28 @@ test("adapter discovers personal chats from friends", async () => {
   assert.deepEqual(chats.map((c) => c.mid), ["c1", "u1"]);
   assert.equal(chats[1].name, "Alice");
   assert.equal(chats[1].type, 0);
+});
+
+test("adapter resolves a message sender from targetProfileDetail.profileName", async () => {
+  const { runtime } = makeMockRuntime();
+  const adapter = new LineAdapter({ dataDir: "/tmp/line-native-linux-contract", linejsRuntime: runtime });
+  await adapter.login();
+  const resolved = await adapter.resolveMessageSender({
+    chatMid: "c1",
+    fromMid: "u2",
+    fromName: null,
+    isMyMessage: false,
+  });
+  assert.equal(resolved.fromName, "Alice");
+});
+
+test("chatInfo resolves a USER chat through the profile resolver", async () => {
+  const { runtime } = makeMockRuntime();
+  const adapter = new LineAdapter({ dataDir: "/tmp/line-native-linux-contract", linejsRuntime: runtime });
+  await adapter.login();
+  const info = await adapter.chatInfo("u1");
+  assert.equal(info.name, "Alice");
+  assert.equal(info.midTypeName, "USER");
 });
 
 test("adapter resolves and sends to personal USER MID", async () => {

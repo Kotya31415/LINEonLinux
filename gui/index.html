@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11131a">
+  <title>LINE Native</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="rail" aria-label="メインナビゲーション">
+    <button class="brand" id="brand" title="プロフィール" aria-label="プロフィール">L</button>
+    <button class="railbtn active" data-view="messages" title="メッセージ" aria-label="メッセージ">▤</button>
+    <button class="railbtn" data-view="friends" title="友だち" aria-label="友だち">◎</button>
+    <button class="railbtn" data-view="favorites" title="お気に入り" aria-label="お気に入り">★</button>
+    <div class="railbottom">
+      <button class="railbtn" data-view="settings" title="設定" aria-label="設定">⚙</button>
+      <button class="railbtn" id="diagnostics" title="接続診断" aria-label="接続診断">⋯</button>
+    </div>
+  </aside>
+
+  <aside class="sidebar">
+    <header class="sidebar-head">
+      <div>
+        <small>LINE NATIVE</small>
+        <h1 id="sidebarTitle">メッセージ</h1>
+      </div>
+      <button id="refresh" class="iconbtn" title="更新" aria-label="更新">↻</button>
+    </header>
+
+    <div class="search" role="search">
+      <span>⌕</span>
+      <input id="search" autocomplete="off" placeholder="トークを検索  Ctrl+K">
+      <kbd>Ctrl K</kbd>
+    </div>
+
+    <div class="filters" id="chatFilters" role="tablist">
+      <button class="selected" data-filter="all">すべて</button>
+      <button data-filter="unread">未読</button>
+      <button data-filter="favorite">お気に入り</button>
+    </div>
+
+    <div id="listArea" class="list-area">
+      <div id="chats" class="chats">
+        <div class="empty"><div class="spinner"></div><span>読み込み中…</span></div>
+      </div>
+      <div id="friends" class="friends hidden"></div>
+    </div>
+
+    <footer class="statusbar">
+      <span class="dot" id="statusDot"></span>
+      <span id="status">接続待機中</span>
+      <span class="status-spacer"></span>
+      <span id="chatCount"></span>
+    </footer>
+  </aside>
+
+  <main class="conversation">
+    <section id="welcome" class="welcome">
+      <div class="welcome-icon">L</div>
+      <h2>LINE Native</h2>
+      <p>LINEJSを使った非公式デスクトップクライアント</p>
+      <div class="welcome-actions"><button id="login" class="primary">LINEに接続</button><button id="loginQr" class="secondary">QRで再認証</button></div>
+      <p class="hint">保存済み認証情報を優先し、無効ならQR認証へ自動切替します。</p>
+    </section>
+
+    <section id="chatview" class="chatview hidden">
+      <header class="chathead">
+        <div id="avatar" class="avatar">?</div>
+        <div class="chatheadname">
+          <strong id="chatname">トーク</strong>
+          <small id="chatmeta">—</small>
+        </div>
+        <button id="favoriteChat" class="head-action" title="お気に入り" aria-label="お気に入り">☆</button>
+        <button id="markRead" class="head-action" title="既読にする" aria-label="既読にする">✓</button>
+        <button id="albums" class="head-action" title="アルバム" aria-label="アルバム">▦</button>
+        <button id="details" class="iconbtn" title="トーク情報" aria-label="トーク情報">ⓘ</button>
+      </header>
+
+      <div id="messages" class="messages" aria-live="polite">
+        <div class="empty">メッセージを読み込みます</div>
+      </div>
+      <button id="jumpLatest" class="jump-latest hidden">新着メッセージ ↓</button>
+
+      <form id="composer" class="composer">
+        <div id="attachmentPreview" class="attachment-preview hidden"></div>
+        <div class="composer-row">
+          <button type="button" id="attach" class="composer-tool" title="ファイルを添付" aria-label="ファイルを添付">＋</button>
+          <button type="button" id="sticker" class="composer-tool" title="スタンプ" aria-label="スタンプ">🙂</button>
+          <textarea id="message" rows="1" maxlength="5000" placeholder="メッセージを入力…"></textarea>
+          <div class="composer-right">
+            <span id="charcount" class="charcount">0 / 5000</span>
+            <button type="submit" id="sendbtn" class="sendbtn" disabled>送信</button>
+          </div>
+        </div>
+      </form>
+      <div class="composer-hint">Enterで送信 · Shift+Enterで改行 · ＋でファイルを添付</div>
+    </section>
+
+    <section id="friendsHome" class="panel-home hidden">
+      <div class="home-icon">◎</div>
+      <h2>友だち</h2>
+      <p>LINEから取得した友だちを検索できます。</p>
+      <button id="loadFriendsHome" class="secondary">友だちを読み込む</button>
+    </section>
+
+    <section id="settingsHome" class="panel-home hidden">
+      <div class="home-icon">⚙</div>
+      <h2>設定</h2>
+      <p>このクライアントのローカル表示設定と接続状態を管理します。</p>
+    </section>
+  </main>
+
+  <aside id="info" class="info hidden">
+    <div class="info-head">
+      <h3>トーク情報</h3>
+      <button id="closeInfo" class="iconbtn" title="閉じる">×</button>
+    </div>
+    <div id="infoAvatar" class="bigavatar">?</div>
+    <h2 id="infoName">—</h2>
+    <p id="infoMid" class="mid"></p>
+
+    <div class="info-actions">
+      <button id="copyMid" class="secondary small">MIDをコピー</button>
+      <button id="toggleFavorite" class="secondary small">お気に入り</button>
+    </div>
+
+    <div class="alias-editor">
+      <label for="aliasInput">この端末での表示名</label>
+      <div class="alias-row">
+        <input id="aliasInput" maxlength="80" placeholder="LINE名を使う">
+        <button id="saveAlias" class="secondary small">保存</button>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-row"><span>種類</span><b id="infoType">—</b></div>
+      <div class="info-row"><span>メンバー</span><b id="infoMembers">—</b></div>
+      <div class="info-row"><span>名前の取得元</span><b id="infoSource">—</b></div>
+    </div>
+
+    <div id="memberList" class="member-list hidden">
+      <div class="section-title"><h4>メンバー</h4><span id="memberCountLabel"></span></div>
+      <div id="memberItems"></div>
+    </div>
+    <p id="infoNote" class="note">名前が取得できない場合のみMIDを補助情報として表示します。</p>
+  </aside>
+</div>
+
+<section id="settingsPanel" class="settings-overlay hidden" aria-label="設定">
+  <div class="settings-card">
+    <div class="settings-header">
+      <div>
+        <small>LINE NATIVE</small>
+        <h2>設定</h2>
+      </div>
+      <button id="closeSettings" class="iconbtn">×</button>
+    </div>
+
+    <section class="setting-section">
+      <h3>アカウント</h3>
+      <div class="profile-card">
+        <div id="profileAvatar" class="bigavatar">L</div>
+        <div class="profile-main">
+          <strong id="profileName">未接続</strong>
+          <span id="profileMid">—</span>
+        </div>
+      </div>
+      <button id="disconnect" class="danger-btn">接続を解除</button>
+    </section>
+
+    <section class="setting-section">
+      <h3>表示</h3>
+      <label class="setting-row">
+        <span><b>表示密度</b><small>トーク一覧とメッセージの余白</small></span>
+        <select id="density">
+          <option value="comfortable">標準</option>
+          <option value="compact">コンパクト</option>
+        </select>
+      </label>
+      <label class="setting-row checkbox-row">
+        <span><b>Enterで送信</b><small>Shift+Enterで改行</small></span>
+        <input id="enterSend" type="checkbox">
+      </label>
+    </section>
+
+    <section class="setting-section">
+      <h3>ローカルデータ</h3>
+      <p class="setting-note">お気に入りと端末上の表示名はこのPCのブラウザ領域にのみ保存されます。</p>
+      <button id="clearLocal" class="secondary">表示名・お気に入りを初期化</button>
+    </section>
+
+    <section class="setting-section">
+      <h3>診断</h3>
+      <button id="settingsDiagnostics" class="secondary">接続診断を開く</button>
+    </section>
+  </div>
+</section>
+
+<div id="toast" class="toast hidden" role="status"></div>
+
+<div id="qrmodal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="qrtitle">
+  <div class="modalcard qr-card">
+    <button id="qrclose" class="iconbtn close">×</button>
+    <div class="modal-icon">QR</div>
+    <h2 id="qrtitle">LINE QRログイン</h2>
+    <p>認証URLが発行されました。下のボタンから開いてください。</p>
+    <a id="qrurl" class="urlbox" target="_blank" rel="noreferrer noopener">認証URLを開く ↗</a>
+    <p class="hint">認証URLは第三者へ共有しないでください。</p>
+  </div>
+</div>
+
+<div id="mediaModal" class="modal media-modal hidden" role="dialog" aria-modal="true" aria-labelledby="mediaCaption">
+  <div class="modalcard media-card">
+    <button id="mediaClose" class="iconbtn close" title="閉じる">×</button>
+    <button id="mediaSave" class="secondary small media-save hidden" title="保存">保存</button>
+    <div id="mediaBody" class="media-body"></div>
+    <div id="mediaCaption" class="media-caption">画像</div>
+  </div>
+</div>
+
+<div id="stickermodal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="stickertitle">
+  <div class="modalcard sticker-card">
+    <button id="stickerClose" class="iconbtn close" title="閉じる">×</button>
+    <div class="modal-icon">🙂</div>
+    <h2 id="stickertitle">スタンプ</h2>
+    <p class="hint">最近受信したスタンプから選択するか、STKPKGID / STKID / STKVERを指定して送信できます。</p>
+    <div id="recentStickers" class="sticker-grid"></div>
+    <div class="sticker-manual">
+      <div class="sticker-manual-title">スタンプIDを指定</div>
+      <div class="sticker-fields">
+        <label>STKPKGID<input id="stickerPackage" inputmode="numeric" autocomplete="off" placeholder="package id"></label>
+        <label>STKID<input id="stickerId" inputmode="numeric" autocomplete="off" placeholder="sticker id"></label>
+        <label>STKVER<input id="stickerVersion" inputmode="numeric" autocomplete="off" value="100" placeholder="100"></label>
+      </div>
+      <div class="sticker-manual-actions">
+        <button id="stickerSendManual" class="primary">送信</button>
+      </div>
+      <p class="setting-note">現在のスタンプ送信は通常のTalk送信経路を使います。テキストメッセージのE2EE送信とは別経路です。</p>
+    </div>
+  </div>
+</div>
+
+<div id="albummodal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="albumtitle">
+  <div class="modalcard album-card">
+    <button id="albumClose" class="iconbtn close" title="閉じる">×</button>
+    <div class="album-header">
+      <div class="album-heading">
+        <div class="modal-icon">▦</div>
+        <div><h2 id="albumtitle">アルバム</h2><p id="albumSubtitle" class="hint">トークのアルバム</p></div>
+      </div>
+      <div class="album-actions">
+        <button id="albumBack" class="secondary small hidden">← アルバム一覧</button>
+        <button id="albumRefresh" class="secondary small">↻ 更新</button>
+      </div>
+    </div>
+    <div id="albumBody" class="album-body"></div>
+  </div>
+</div>
+
+<div id="diagmodal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="diagtitle">
+  <div class="modalcard diag-card">
+    <button id="diagclose" class="iconbtn close">×</button>
+    <h2 id="diagtitle">接続診断</h2>
+    <pre id="diagtext">診断情報を取得しています…</pre>
+    <button id="diagrefresh" class="secondary">再取得</button>
+  </div>
+</div>
+
+<script src="renderer.js"></script>
+</body>
+</html>

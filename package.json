@@ -1,18 +1,1 @@
-{
-  "name": "line-native-linux-cli",
-  "version": "0.7.0",
-  "private": true,
-  "type": "module",
-  "engines": {
-    "node": ">=18"
-  },
-  "dependencies": {
-    "@evex/linejs": "npm:@jsr/evex__linejs@3.4.2"
-  },
-  "scripts": {
-    "test": "node --test",
-    "check": "node --check bin/line-native.mjs && node --check bin/line-native-tui.mjs && node --check lib/line-adapter.mjs && node --check lib/normalize.mjs && node --check lib/tui.mjs",
-    "start": "node bin/line-native.mjs",
-    "tui": "node bin/line-native-tui.mjs"
-  }
-}
+{"name":"line-native-linux-gui","version":"1.5.4","private":true,"type":"module","main":"electron-main.cjs","engines":{"node":">=20"},"dependencies":{"@evex/linejs":"npm:@jsr/evex__linejs@3.4.2"},"devDependencies":{"electron":"^39.0.0"},"scripts":{"start":"electron .","tui":"node bin/line-native-tui.mjs","cli":"node bin/line-native.mjs","test":"node --test","check":"node --check electron-main.cjs && node --check preload.cjs && node --check gui/renderer.js && node --check bridge/linejs_bridge.mjs && node --check lib/line-adapter.mjs"}}

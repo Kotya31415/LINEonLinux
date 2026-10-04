@@ -1,50 +1,26 @@
-# LINE Native Linux CLI / TUI 0.6.0
+# LINE Native GUI 1.5.4
 
-Linux terminal client prototype using `@evex/linejs` as the LINE transport layer.
+Album/Moa download fix over LINEJS 3.4.2.
 
-## Modes
+# LINE Native GUI 1.5.2
 
-- `npm start` — command-line shell
-- `npm run tui` — desktop-style terminal UI
-- `npm test` — automated tests
+Experimental desktop LINE client built around `@evex/linejs` 3.4.2.
 
-## TUI
+## 1.5.2 fixes
 
-The 0.6 TUI is designed to feel closer to a desktop messenger while remaining terminal-native:
+- Stabilizes avatar DOM nodes. Async login/chat-info updates no longer replace root avatar elements, removing the `Cannot read properties of null (reading 'replaceWith')` failure mode seen during login and chat switching.
+- Infers GROUP/ROOM type from `BaseClient.getToType()` when the joined-chat payload omits a usable type field.
+- Keeps chat selection and profile/avatar updates independent from asynchronous info requests.
 
-- left conversation sidebar with avatar initials, preview, time and unread badge
-- main conversation header with chat type/member count
-- left/right message bubbles
-- CJK-aware display width and wrapping
-- chat search (`/`)
-- pane switching (`Tab`, `←`, `→`)
-- message scrolling (`PgUp`, `PgDn`, `Home`, `End`)
-- compose with `i` or `Enter`
-- refresh with `r`
-- help with `?`
-- quit with `q` / `Ctrl+C`
+## Development
 
-The TUI never silently downgrades an E2EE message to plaintext.
+```bash
+npm install
+npm test
+npm run check
+npm start
+```
 
-## Data
+## 1.5.4
 
-LINEJS FileStorage defaults to `${XDG_DATA_HOME:-~/.local/share}/line-native-linux` via the adapter's data directory. Override with `LINE_NATIVE_DATA_DIR` for isolated testing.
-
-
-## TUI design
-
-The TUI takes inspiration from terminal applications such as `tgt`: clear bordered panes, explicit focus, modal help/details views, a command palette, context-sensitive key hints, and compact list navigation. The LINE-specific transport remains in `lib/line-adapter.mjs`; this frontend only changes presentation and interaction.
-
-### TUI shortcuts
-
-- `↑/↓`, `j/k`: select chats / scroll messages
-- `Enter`: open chat or send while composing
-- `Tab`, `←/→`: switch pane
-- `i`: compose
-- `/`: search
-- `1/2/3`: all / unread / favorites
-- `Ctrl+K`: command palette
-- `d`: conversation details
-- `?`: help
-- `r`: refresh
-- `q`: quit
+Album photo thumbnails are now progressively eager-loaded with a small worker pool, so photo tiles no longer require an individual click before displaying. Video items without a thumbnail remain click-to-load to avoid unexpectedly downloading large video files.
