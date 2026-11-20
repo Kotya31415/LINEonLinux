@@ -1,9 +1,11 @@
+[English](README-en.md) | [日本語](README-ja.md)
+
 # LINEonLinux
 
 公式Windows版LINEを、**Wine** を使用してLinux上で動かすためのツールです。
 
 > 非公式プロジェクトです。LY Corporation / LINE とは無関係です。
-> LINE本体は同梱せず、公式CDNからダウンロードして検証してから実行します。
+> LINE本体は同梱せず、公式からダウンロードして検証してから実行します。
 
 
 ## 動作環境

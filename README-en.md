@@ -1,9 +1,10 @@
+[English](README-en.md) | [日本語](README-ja.md)
 # LINEonLinux
 
 This is a tool for running the official Windows version of LINE on Linux using **Wine**.
 
 > This is an unofficial project. It is not affiliated with LY Corporation or LINE.
-> The LINE application itself is not included; you must download it from the official CDN, verify it, and then run it.
+> The LINE application itself is not included; you must download it from the official, verify it, and then run it.
 
 ## System Requirements
 
@@ -101,5 +102,3 @@ rm -rf ~/.linewine
 
 - Portable Wine: [Kron4ek/Wine-Builds](https://github.com/Kron4ek/Wine-Builds)
   (Using wine-11.22-amd64 with a fixed SHA-256 hash)
-
-  
