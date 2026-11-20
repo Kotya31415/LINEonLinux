@@ -1,0 +1,27 @@
+# OpenSSL config for the LOCAL self-signed compatibility certificate.
+#
+# LINE 26.x refuses to start unless the Windows system DLLs it loads carry
+# an Authenticode signature whose signer is "Microsoft Windows"
+# (unsigned -> NO_SIGNATURE, a neutral name -> UNTRUSTED_SIGNER).
+# This certificate is generated locally on your machine, is NOT issued by
+# Microsoft, is never added to any trust store, and is only used to sign
+# Wine's DLLs inside the dedicated LINE prefix (~/.linewine/prefix).
+[req]
+prompt = no
+default_md = sha256
+default_bits = 2048
+distinguished_name = dn
+x509_extensions = v3_req
+
+[dn]
+C = US
+ST = Washington
+L = Redmond
+O = Microsoft Corporation
+CN = Microsoft Windows
+
+[v3_req]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = microsoft.com
