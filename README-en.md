@@ -1,4 +1,4 @@
-[English](README-en.md) | [日本語](README-ja.md)
+[English](README-en.md) | [日本語](README.md)
 # LINEonLinux
 
 This is a tool for running the official Windows version of LINE on Linux using **Wine**.
