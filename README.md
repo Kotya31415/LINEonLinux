@@ -4,7 +4,7 @@
 
 公式Windows版LINEを、**Wine** を使用してLinux上で動かすためのツールです。
 
-> これは非公式プロジェクトです。LY Corporation / LINE とは無関係です。
+> これは非公式プロジェクトです。LY Corporation / LINEとは無関係です。
 > LINE本体は同梱しておらず、公式からダウンロードして実行します。
 
 
@@ -22,7 +22,7 @@
 ./installer.sh --dpi 144  # 高DPIディスプレイ向け（150%）
 ```
 
-DPIは Wine の LogPixels で、既定は 120（125%）。96=100%、144=150%、
+DPI既定は 120（125%）。96=100%、144=150%、
 192=200% です。指定した値は `~/.linewine/dpi` に保存され、起動時にも
 使われます。起動時だけ変えるなら環境変数が優先します:
 `LINEWINE_DPI=120 line-wine`。DPIを変えると次回起動時にレジストリの
@@ -37,16 +37,16 @@ DPIは Wine の LogPixels で、既定は 120（125%）。96=100%、144=150%、
 
 ## 日本語入力
 
-Wine の X11 ドライバは XIM 経由で日本語を受け取るため、起動時に
-`launch-line.sh` が次を自動で設定します:
+WineのX11ドライバはXIM経由で日本語を受け取るため、起動時に
+`launch-line.sh`が次を自動で設定します:
 
-- 実行中の IME を検出して `XMODIFIERS` を設定（fcitx系 → `@im=fcitx`、IBus → `@im=ibus`）
-- ロケールが日本語でない場合、`LC_ALL=ja_JP.UTF-8` を設定します。
+- 実行中のIMEを検出して`XMODIFIERS`を設定（fcitx系 → `@im=fcitx`、IBus → `@im=ibus`）
+- ロケールが日本語でない場合`LC_ALL=ja_JP.UTF-8`を設定します。
 
-ホスト側には IBus か fcitx5 が Mozc/Anthy 等と一緒に動いている必要があります。
-`./diagnose.sh` で IME の検出状態と ja ロケールの有無を確認できます。
-既に自分で設定している `XMODIFIERS` は上書きしません。
-自動設定を丸ごと止める場合は `LINEWINE_NO_IME_ENV=1`です。
+IBus か fcitx5 が Mozc/Anthy 等と一緒に動いている必要があります。
+`./diagnose.sh`でIME の検出状態とjaロケールの有無を確認できます。
+既に自分で設定している`XMODIFIERS`は上書きしません。
+自動設定を丸ごと止める場合は`LINEWINE_NO_IME_ENV=1`です。
 
 ## 使い方
 
@@ -67,6 +67,7 @@ line-wine            # 起動（Wine更新で署名が古ければ自動で再�
 | Waylandでウィンドウが透明になる | Wine の描画を X11 ドライバ＋EGL無効に固定（`LINEWINE_KEEP_WAYLAND=1` で解除） |
 | ダウンロードが prefix の奥に埋もれる | Windowsのユーザーフォルダを実 XDG フォルダへリンク |
 | 文字化け・豆腐 | Noto Sans CJK へのフォント置換、DPI（既定120、`--dpi`で変更可）、RGBスムージング |
+| LINEの影が残る | `line-window-fix.py`（X11ウォッチャー）が影ウィンドウを不可視化 |
 
 ## データの場所
 
