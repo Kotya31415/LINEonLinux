@@ -58,7 +58,7 @@ if [[ -f "$LINE_LAUNCHER" && "$REINSTALL" != 1 ]]; then
   ok "LINE is already installed ($(line_version)); it updates itself on launch"
   log "Refreshing compat profile and launcher only"
 else
-  # ---------------------------------------------------------- prefix --
+  # -- prefix --
   if [[ -f "$PREFIX/system.reg" && ! -f "$PREFIX/drive_c/windows/syswow64/ntdll.dll" && ! -d "$LINE_DIR" ]]; then
     warn "Existing prefix has no 32-bit support (LINE's installer is 32-bit); recreating it"
     "$WINESERVER_BIN" -k 2>/dev/null || true
@@ -73,13 +73,13 @@ else
   fi
   [[ -f "$PREFIX/drive_c/windows/syswow64/ntdll.dll" ]] || die "Prefix has no 32-bit support (syswow64 is empty). On Debian/Ubuntu install wine32:i386; otherwise use WineHQ builds, then run this again."
 
-  # ------------------------------------------- sign before installing --
+  # -- sign before installing --
   # LINE's installer itself already checks DLL signatures.
   ensure_font_view
   log "Signing Wine DLLs (LINE 26.x signature check)"
   sign_wine_dlls
 
-  # --------------------------------- compat profile BEFORE installing --
+  # -- compat profile BEFORE installing --
   # The registry profile must already be in place while the installer
   # runs: the msvcp140_2 override and the X11/EGL settings apply to the
   # installer's own processes too (an unimplemented msvcp140_2 call
@@ -87,7 +87,7 @@ else
   apply_registry_profile
   apply_user_folders
 
-  # ------------------------------------------------- download LINE --
+  # -- download LINE --
   mkdir -p "$CACHE_DIR"
   INSTALLER_EXE=""
   if [[ -n "${LINE_INSTALLER:-}" && -f "${LINE_INSTALLER:-}" ]]; then
@@ -113,7 +113,7 @@ else
   fi
   verify_line_installer "$INSTALLER_EXE"
 
-  # ---------------------------------------------------- run installer --
+  # -- run installer --
   log "Starting the official LINE installer — click through it"
   log "Note: the installer usually launches LINE when it finishes. Close LINE's window so this script can complete the remaining steps."
   WINEDLLOVERRIDES="winemenubuilder.exe=d" "$WINE_BIN" "$INSTALLER_EXE" || true
@@ -137,19 +137,18 @@ else
   sign_wine_dlls
 fi
 
-# ------------------------------------------------------ compat profile --
+# -- compat profile --
 ensure_font_view
 apply_registry_profile
 apply_user_folders
 
-# ------------------------------------------------------ deploy launcher --
+# -- deploy launcher --
 APP_DIR="$LINEWINE_HOME/app"
 log "Installing launcher into $APP_DIR"
 mkdir -p "$APP_DIR" "$HOME/.local/bin"
-cp -f "$KIT_DIR/launch-line.sh" "$KIT_DIR/compat.sh" "$KIT_DIR/signing.cnf" \
+cp -f "$KIT_DIR/launch-line.sh" "$KIT_DIR/compat.sh" "$KIT_DIR/line-window-fix.py" "$KIT_DIR/signing.cnf" \
       "$KIT_DIR/diagnose.sh" "$KIT_DIR/uninstall.sh" "$APP_DIR/"
 chmod +x "$APP_DIR/launch-line.sh" "$APP_DIR/diagnose.sh" "$APP_DIR/uninstall.sh"
-rm -f "$APP_DIR/line-window-fix.py"  # removed in v2.8; drop stale copies on upgrade
 ln -sfn "$APP_DIR/launch-line.sh" "$HOME/.local/bin/line-wine"
 
 ICON_DST="${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor/256x256/apps"

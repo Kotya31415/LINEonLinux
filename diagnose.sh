@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# diagnose.sh — print the state of the LINE-on-Wine install for support.
+# diagnose.sh — print the state of the LINEonLinux install for support.
 # Read-only: it never installs, signs, or changes anything.
-DIAG_VERSION="0.2.5"
+DIAG_VERSION="0.2.6"
 
 SELF_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 if [[ -f "$SELF_DIR/compat.sh" ]]; then
@@ -50,6 +50,7 @@ printf 'ja locale:     %s\n' "$(locale -a 2>/dev/null | grep -i 'ja_JP' >/dev/nu
 printf 'Compat profile: %s\n' "$(yn test -f "$(compat_marker_path)")"
 printf 'Desktop entry: %s\n' "$(yn test -f "${XDG_DATA_HOME:-$HOME/.local/share}/applications/line-wine.desktop")"
 printf 'Launcher link: %s\n' "$(yn test -L "$HOME/.local/bin/line-wine")"
+printf 'Window watcher: %s\n' "$(pgrep -f 'line-window-fix.py' >/dev/null 2>&1 && echo running || echo 'not running (starts with LINE)')"
 printf 'LINE running:  %s\n' "$(pgrep -f 'LINE\\.exe' >/dev/null 2>&1 && echo yes || echo no)"
 if [[ -s "$STATE_DIR/signing-failures.txt" ]]; then
   printf 'Signing failures: %s file(s), see %s\n' "$(wc -l < "$STATE_DIR/signing-failures.txt")" "$STATE_DIR/signing-failures.txt"

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # launch-line.sh — start LINE from the dedicated Wine prefix.
-# Re-signs Wine DLLs first if a Wine upgrade made the signatures stale.
+# Re-signs Wine DLLs first if a Wine upgrade made the signatures stale,
+# and starts the shadow-window watcher on X11 sessions.
 set -euo pipefail
 
 SELF_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
@@ -29,7 +30,14 @@ if ! signing_is_current; then
   fi
 fi
 
-# ------------------------------------------------------- Japanese input --
+# -- shadow windows (X11) --
+# Watcher hides LINE's stray shadow windows; it exits by itself once
+# LINE.exe is gone. Disable with LINEWINE_NO_WINDOW_FIX=1.
+if [[ -n "${DISPLAY:-}" && "${LINEWINE_NO_WINDOW_FIX:-0}" != 1 && -f "$SELF_DIR/line-window-fix.py" ]]; then
+  (setsid python3 -u "$SELF_DIR/line-window-fix.py" >/dev/null 2>&1 &)
+fi
+
+# -- Japanese input --
 # Wine's X11 driver receives Japanese text through XIM, which needs:
 #   1. a Japanese locale for the Wine process (XIM won't engage under C)
 #   2. XMODIFIERS pointing at the host IME (@im=ibus / @im=fcitx)

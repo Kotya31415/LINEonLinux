@@ -1,16 +1,11 @@
 #!/usr/bin/env bash
-# compat.sh — the LINE-on-Wine compatibility profile, shared by
+# compat.sh — the LINEonLinux compatibility profile, shared by
 # installer.sh, launch-line.sh, update.sh and diagnose.sh:
-#   * paths (~/.linewine layout)
-#   * DLL signing (LINE 26.x NO_SIGNATURE workaround)
-#   * font view (color emoji fonts hidden from Wine; they crash LINE)
-#   * registry profile (fonts, DPI, window/media fixes)
-#   * official-installer verification (LY Corporation signature)
-#
-# Signing approach adapted from Namnarak/line-linux-helper and
-# xullul/line-linux (both MIT). The certificate is generated locally,
-# is NOT Microsoft's, and is never added to any trust store. It only
-# signs files inside the dedicated LINE prefix.
+#   ・paths (~/.linewine layout)
+#   ・DLL signing (LINE 26.x NO_SIGNATURE workaround)
+#   ・font view (color emoji fonts hidden from Wine; they crash LINE)
+#   ・registry profile (fonts, DPI, window/media fixes)
+#   ・official-installer verification (LY Corporation signature)
 
 LINEWINE_HOME="${LINEWINE_DIR:-$HOME/.linewine}"
 PREFIX="${LINEWINE_PREFIX:-$LINEWINE_HOME/prefix}"
