@@ -23,10 +23,9 @@ if [[ -f "$PREFIX/system.reg" ]]; then
   lw_resolve_wine
   log "Redeploying launcher into $APP_DIR"
   mkdir -p "$APP_DIR" "$HOME/.local/bin"
-  cp -f "$KIT_DIR/launch-line.sh" "$KIT_DIR/compat.sh" "$KIT_DIR/signing.cnf" \
+  cp -f "$KIT_DIR/launch-line.sh" "$KIT_DIR/compat.sh" "$KIT_DIR/line-window-fix.py" "$KIT_DIR/signing.cnf" \
         "$KIT_DIR/diagnose.sh" "$KIT_DIR/uninstall.sh" "$APP_DIR/"
-  rm -f "$APP_DIR/line-window-fix.py"  # removed in v2.8; drop stale copies on upgrade
-  chmod +x "$APP_DIR/launch-line.sh" "$APP_DIR/diagnose.sh" "$APP_DIR/uninstall.sh"
+    chmod +x "$APP_DIR/launch-line.sh" "$APP_DIR/diagnose.sh" "$APP_DIR/uninstall.sh"
   ln -sfn "$APP_DIR/launch-line.sh" "$HOME/.local/bin/line-wine"
 
   ensure_font_view
